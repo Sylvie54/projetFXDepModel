@@ -1,0 +1,13 @@
+# IDE and editor-specific files
+nbproject/private/
+build/
+build.xml
+.settings/
+.project
+manifest.mf
+*.vim
+.*.swp
+.vscode/
+
+target/
+# src/main/resources/database.properties
