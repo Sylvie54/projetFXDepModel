@@ -15,11 +15,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import AFPA.CDA03.demo.App;
 import DAO.BaseSQLServer;
+import DAO.Connexion;
 import model.Person;
 import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import model.ListePerson;
 import util.DateUtil;
 import utilitaires.Alertes;
 
@@ -91,10 +93,10 @@ public class PersonOverviewController {
      * @param App
      */
     public void setMainApp(App App) {
-        this.app = App;
+       
 
         // Add observable list data to the table
-        personTable.setItems(App.getPersonData());
+        personTable.setItems(ListePerson.getPersonData());
     }
     /**
  * Fills all text fields to show details about the person.
@@ -123,6 +125,12 @@ public class PersonOverviewController {
     }
     @FXML
     private void handleQuitter() {
+        try {
+                Connexion.closeConnection();
+            }
+            catch (Exception ec) {
+                System.out.println("pb cloture connexion : "+ ec.getMessage());
+            }
         System.exit(0);
     }
     @FXML
@@ -159,7 +167,7 @@ private void handleNewPerson() throws Exception  {
     if (okClicked) {
         int dernierId = BaseSQLServer.insert(tempPerson);
         tempPerson.setId(dernierId);
-        App.getPersonData().add(tempPerson);
+        ListePerson.getPersonData().add(tempPerson);
        
     }
     

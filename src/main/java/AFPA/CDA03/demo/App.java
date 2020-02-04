@@ -29,7 +29,7 @@ public class App extends Application
     private BorderPane rootLayout;
     
     // liste observable d'objets Person
-    private static ObservableList<Person> personData = FXCollections.observableArrayList();
+    
 
     // méthode start lancé automatiquement (classe Application)
     @Override
@@ -43,7 +43,12 @@ public class App extends Application
             */ 
             this.primaryStage.setOnCloseRequest(event ->
             {
-                Connexion.closeConnection();
+                try {
+                    Connexion.closeConnection();
+                }
+                catch (Exception ec) {
+                    System.out.println("pb clôture connexion : "+ ec.getMessage());
+                }
                 System.exit(0);
             });  
             // appel de la méthode d'initialisation de la base    
@@ -55,17 +60,16 @@ public class App extends Application
             Alertes.alerte(Alert.AlertType.WARNING,primaryStage,
                     "Attention", "Un problème est survenu", "Veuillez réessayer ultérieurement");
             e.printStackTrace();
-            Connexion.closeConnection();
+            try {
+                Connexion.closeConnection();
+            }
+            catch (Exception ec) {
+                System.out.println("pb clôture connexion : "+ ec.getMessage());
+            }
             System.exit(0);
         }
     }
-    public static ObservableList<Person> getPersonData() {
-        return personData;
-    }
     
-    public static void ajouterPersonne(Person person) {
-        personData.add(person);
-    }
     /**
      * Initializes the root layout.
      * @throws java.lang.Exception
@@ -146,7 +150,12 @@ public class App extends Application
             // sortie del'application par la croix du borderPane
             dialogStage.setOnCloseRequest(event ->
             {
-                Connexion.closeConnection();
+                try {
+                        Connexion.closeConnection();
+                }
+                catch (Exception ec) {
+                     System.out.println("pb clôture connexion : "+ ec.getMessage());
+                }
                 System.exit(0);
             });    
             Scene scene = new Scene(page);
