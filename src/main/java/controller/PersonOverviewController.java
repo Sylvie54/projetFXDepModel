@@ -16,11 +16,17 @@ import javafx.scene.control.TableView;
 import AFPA.CDA03.demo.App;
 import DAO.BaseSQLServer;
 import DAO.Connexion;
+import java.io.IOException;
 import model.Person;
 import java.util.Optional;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import model.ListePerson;
 import util.DateUtil;
 import utilitaires.Alertes;
@@ -163,7 +169,7 @@ private void handleNewPerson() throws Exception  {
     
     Person tempPerson = new Person();
  // appel de la méthode ouvrant la fenêtre modale de création/édition de la personne
-    boolean okClicked = App.showPersonEditDialog(tempPerson);
+    boolean okClicked = showPersonEditDialog(tempPerson);
     if (okClicked) {
         int dernierId = BaseSQLServer.insert(tempPerson);
         tempPerson.setId(dernierId);
@@ -182,7 +188,7 @@ private void handleEditPerson() throws Exception {
     Person selectedPerson = personTable.getSelectionModel().getSelectedItem();
     if (selectedPerson != null) {
         int ancId = selectedPerson.getId();
-        boolean okClicked = App.showPersonEditDialog(selectedPerson);
+        boolean okClicked = showPersonEditDialog(selectedPerson);
         if (okClicked) {
             showPersonDetails(selectedPerson);
             BaseSQLServer.update(selectedPerson, ancId);
@@ -191,5 +197,54 @@ private void handleEditPerson() throws Exception {
         // Nothing selected.
         Alertes.alerte(Alert.AlertType.WARNING,App.getPrimaryStage(), "pas de sélection", "No Person Selected","Please select a person in the table." );
         }
+   }
+   /**
+     * Opens a dialog to edit details for the specified person. If the user
+     * clicks OK, the changes are saved into the provided person object and true
+     * is returned.
+     *
+     * @param person the person object to be edited
+     * @return true if the user clicked OK, false otherwise.
+     * @throws java.lang.Exception
+     */
+public static boolean showPersonEditDialog(Person person) throws Exception  {
+        try {            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(App.class.getClassLoader().getResource("PersonEditDialog.fxml"));
+           
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edit Person");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(App.getPrimaryStage());
+            // sortie del'application par la croix du borderPane
+            dialogStage.setOnCloseRequest(event ->
+            {
+                try {
+                        Connexion.closeConnection();
+                }
+                catch (Exception ec) {
+                     System.out.println("pb clôture connexion : "+ ec.getMessage());
+                }
+                System.exit(0);
+            });    
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+            // Set the person into the controller.
+            PersonEditDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setPerson(person);
+             
+            // Show the dialog and wait until the user closes it
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
+    
 }

@@ -126,54 +126,7 @@ public class App extends Application
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
-        /**
-     * Opens a dialog to edit details for the specified person. If the user
-     * clicks OK, the changes are saved into the provided person object and true
-     * is returned.
-     *
-     * @param person the person object to be edited
-     * @return true if the user clicked OK, false otherwise.
-     * @throws java.lang.Exception
-     */
-    public static boolean showPersonEditDialog(Person person) throws Exception  {
-        try {            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(App.class.getClassLoader().getResource("PersonEditDialog.fxml"));
-           
-            AnchorPane page = (AnchorPane) loader.load();
-
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Person");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(primaryStage);
-            // sortie del'application par la croix du borderPane
-            dialogStage.setOnCloseRequest(event ->
-            {
-                try {
-                        Connexion.closeConnection();
-                }
-                catch (Exception ec) {
-                     System.out.println("pb clôture connexion : "+ ec.getMessage());
-                }
-                System.exit(0);
-            });    
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
-            // Set the person into the controller.
-            PersonEditDialogController controller = loader.getController();
-            controller.setDialogStage(dialogStage);
-            controller.setPerson(person);
-             
-            // Show the dialog and wait until the user closes it
-            dialogStage.showAndWait();
-
-            return controller.isOkClicked();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+     
     
     public static void main( String[] args )
     {
