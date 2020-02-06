@@ -82,7 +82,15 @@ public class PersonOverviewController {
      */
     @FXML
     private void initialize() {
-      
+        /*
+        
+        lambda : Une fabrique à valeurs (value factory en anglais) est un callback placé sur une colonne de type <S, T>
+        et qui permet de retrouver une valeur de type T à partir d'un objet source de type S contenu dans la table.
+
+        Les objets de type TableColumn<S, T> disposent d'une propriété cellValueFactory
+        qui permet de spécifier ce callback (à ne pas confondre avec la propriété cellFactory).
+        La colonne firstNameColumn sera mis à jour directement avec la valeur de la property firstNameProperty
+        */
         firstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
         lastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
        
